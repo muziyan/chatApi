@@ -1,8 +1,19 @@
 # egg.js + egg-sequelize plugin 开发聊天室api接口
 
-### database
+## 下载运行
 
-### user tables
+>`git clone https://github.com/muziyan/chatApi.git`  
+>`copy`一份`.env.exmple`为`.env`在里面配置数据库帐号密码端口数据库名称和跨域白名单  
+>执行`npx sequelize db:migrate`迁移数据库
+>`npx sequelize db:migrate:undo:all`回滚初始状态  
+>执行`yarn` or `npm i` 下载依赖包  
+>执行`yarn dev` or `npm run dev`运行程序
+
+> [egg.js文档](https://eggjs.org/)  
+> [sequelize文档](https://sequelize.org/)
+
+### database
+#### user tables
 
 - users tables column
 ```
