@@ -5,6 +5,7 @@
 >`git clone https://github.com/muziyan/chatApi.git`  
 >`copy`一份`.env.exmple`为`.env`在里面配置数据库帐号密码端口数据库名称和跨域白名单  
 >执行`yarn` or `npm i` 下载依赖包  
+>如果`databse`下面有`config.json`请先删除在执行下列命令
 >执行`npx sequelize init:config`生成`database config.json`  
 >执行`npx sequelize db:migrate`迁移数据库  
 >`npx sequelize db:migrate:undo:all`回滚初始状态  
