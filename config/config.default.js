@@ -19,7 +19,8 @@ module.exports = appInfo => {
       port: process.env.PORT,
       database: process.env.DATABASE,
       username:process.env.USERNAME,
-      password:process.env.PASSWORD
+      password:process.env.PASSWORD,
+      timezone:"+08:00"
     },
     security:{
       csrf:{
@@ -27,7 +28,23 @@ module.exports = appInfo => {
       },
       domainWhiteList:[
         process.env.WEB_URL
-      ]
+      ],
+    },
+    cors:{
+      origin:"*",
+      allowMethod:"*"
+    },
+    multipart:{
+      mode:'file'
+    },
+    oss:{
+      client:{
+        accessKeyId: process.env.ACCESS_KEY_ID,
+        accessKeySecret: process.env.ACCESS_KEY_SECRET,
+        bucket: process.env.BUCKET,
+        endpoint:process.env.REGION,
+        timeout: '60s',
+      }
     }
   };
 

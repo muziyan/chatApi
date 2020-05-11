@@ -61,8 +61,8 @@ class UserController extends Controller{
 
   async checkChatId(){
     const {service} = this;
-    let isEmail = await service.userService.getChatId(this.ctx.request.params.chat_id)
-    if (isEmail){
+    let isChatId = await service.userService.getChatId(this.ctx.params.chat_id)
+    if (isChatId){
       this.ctx.status = 422;
     }else{
       this.ctx.status = 200;

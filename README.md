@@ -15,25 +15,122 @@
 > [egg.js文档](https://eggjs.org/)  
 > [sequelize文档](https://sequelize.org/)
 
+
+* [database](###database)
+    - [usertable](####userstablescolumn)
+* [api doc](###apiDoc)
+
+
+
 ### database
-#### user tables
 
-- users tables column
+#### users tables column
+> 用户信息表
+
 ```
-    id: integer         // 主键 
-    chat_id: integer    // 帐号id
-    personality: string // 个性签名
-    avatar: string      // 头像路径
-    register_at: date   // 注册时间
-    username: string    // 用户昵称
-    password: string    // 用户密码
-    sex:enum            // 用户性别 ['max','female','unknown']  默认 unknown
-    birthday: date      // 用户生日 默认 注册时间
-    phone: integer      // 用户手机号
-    email： string      // 用户邮箱
+    id: integer primarkey autoIncrement       // 主键 自增
+    chat_id: integer        // 帐号id
+    personality: string     // 个性签名
+    avatar: string          // 头像路径
+    register_at: date       // 注册时间
+    username: string        // 用户昵称
+    password: string        // 用户密码
+    sex:enum                // 用户性别 ['max','female','unknown']  默认 unknown
+    birthday: date          // 用户生日 默认 注册时间
+    phone: integer          // 用户手机号
+    email： string          // 用户邮箱
 ```
 
-- user api doc
+- user message table column
+> 好友消息表
+
+```
+    id: integer primarkey autoIncrement     // 主键 自增
+    from_id: integer        // 发送消息用户的id
+    to_id: integer          // 接受消息用户的id
+    msg: string             // 消息数据
+    msg_type: enum          // 消息类型 ['txt','img','voice'] 默认 txt
+    from_date: date         // 消息时间
+```
+
+- user request table column
+> 好友申请表
+
+```
+    id: integer primarkey autoIncrement     // 主键 自增
+    from_id: integer        // 发送好友申请用户id
+    to_id: integer          // 接受好友申请用户id
+    verify_data: string     // 申请信息
+    from_date: date         // 申请时间
+    status: enum            // 申请状态 ['wait','agree','refuse'] 默认wait
+```
+
+- group table column
+> 群组表
+
+```
+    id: integer primarkey autoIncrement     // 主键 自增
+    group_name: string      // 群组名称
+    group_avatar: string    // 群组头像地址
+    group_desc: string      // 群组描述
+    group_placard: string   // 群组公告
+```
+
+- group messages table column 
+> 群组消息表
+
+```
+    id: integer primarkey autoIncrement     // 主键 自增
+    group_id: integer       // 群组id
+    user_id: integer        // 用户id
+    msg: string             // 消息数据
+    msg_type: enum          // 消息类型 ['txt','img','voice'] 默认 txt
+    from_date: date         // 消息时间
+```
+
+- group user table column
+> 群组成员表
+
+```
+    id: integer primarkey autoIncrement     // 主键 自增
+    group_id: integer       // 群组id
+    user_id: integer        // 用户id
+    identity: enum          // 群组中用户身份   ['lord','admin','user'] 默认 user
+```
+
+### apiDoc
+
+- auth
+> login and register and checkEmali and checkChatId four three api No token verification required
+
+``` 
+    register api
+    post("/api/register")
+
+
+    login api
+    data={
+        chat_id,
+        password
+    }
+    post("/api/login",data)
+    chat_id err return status 404 and message
+    password err return status 422 and message
+    login success return Bearer token
+    token use function
+    request header add Authorization : token 
+    E.g:
+    headers = {
+        Authorization : token
+    }
+
+    get user api
+    需要在请求头添加token,才能获取到数据
+    get("/api/getUser")
+```
+
+- user
+> 用户接口
 
 ```
     // get all data
@@ -112,26 +209,114 @@
     with data return 422 Return 422 if there is data, otherwise return 200
 ```
 
-### auth api
+- user-message
+> 好友消息表接口
 
-``` 
-    register api
-    post("/api/register")
+```
+    // get all user message data and from user information
+    get('/api/user-message')
+    =>
+    [
+        {
+            id,
+            from_id,
+            from_user:{
+                // Related user information
+            },
+            to_id,
+            to_user:{
+                // Related user information
+            },
+            msg,
+            msg_type,
+            from_date
+        }
+        ...
+    ]
 
 
-    login api
-    data={
-        chat_id,
-        password
+    // get one-to-one user message data and user infomation
+    get("/api/user-message/:from_id/:to_id")
+    =>
+    {
+        {
+            id,
+            from_id,
+            from_user:{
+                // Related user information
+            },
+            to_id,
+            to_user:{
+                // Related user information
+            },
+            msg,
+            msg_type,
+            from_date
+        }
+        ...
     }
-    post("/api/login",data)
-    chat_id err return status 404 and message
-    password err return status 422 and message
-    login success return Bearer token
-    token use function
-    request header add Authorization : token 
-    E.g:
-    headers = {
-        Authorization : token
+
+    // add user message data
+    data = {
+        from_id,
+        to_id,
+        msg,
+        msg_type // The message type is text by default. If it is text, you can not add this field.
     }
+    post("/api/user-message",data)
+    =>
+    {
+        user_message_id
+    }
+```
+
+- user-requests
+> 好友请求接口
+
+```
+    // get all friend requests
+    get("/api/user-requests")
+    =>
+    {
+        from_id,
+        from_user:{
+            user data
+        },
+        to_id,
+        to_user:{
+            user data
+        },
+        verify_data,
+        from_date,
+        status
+    }
+
+    // get all friends 
+    // Need to upload the current user id
+    get("/api/user-requests/user_id")
+    => 
+    [
+        {
+            user data
+        }
+        ...
+    ]
+
+    // send firend application
+    data = {
+        from_id,
+        to_id,
+        verify_data
+    }
+    post("/api/user-requests",data)
+    => 
+    {
+        user-requests-id
+    }
+
+    // Process friend application
+    data = {
+        status: 'agree' or 'refuse'
+    }
+    put("/api/user-requests/id",data)
 ```

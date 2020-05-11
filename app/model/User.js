@@ -7,7 +7,7 @@ module.exports = app =>{
 
   let date = new Date().toLocaleString()
 
-  return app.model.define("user", {
+  const user =  app.model.define("user", {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
@@ -42,7 +42,10 @@ module.exports = app =>{
     },
     birthday: {
       type: Sequelize.DATE,
-      defaultValue: date
+      defaultValue: date,
+      get(){
+        return moment(this.getDataValue("birthday")).format("YYYY-MM-DD HH:mm:ss");
+      }
     },
     phone: {
       type: Sequelize.INTEGER
@@ -58,4 +61,7 @@ module.exports = app =>{
   },{
     timestamps:false
   });
+
+
+  return user;
 }
