@@ -51,6 +51,9 @@ module.exports = {
           type:Sequelize.ENUM,
           values:['online',"offline"],
           defaultValue:"offline"
+        },
+        socket_id:{
+            type:Sequelize.STRING
         }
     })
   },

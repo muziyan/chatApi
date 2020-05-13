@@ -4,7 +4,7 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller,middleware} = app;
+  const { router, controller,middleware,io} = app;
 
   const authMiddleware = middleware.authMiddleware(app)
 
@@ -21,7 +21,14 @@ module.exports = app => {
   router.post("/api/login",controller.auth.login)
   router.post("/api/register",controller.users.create)
   router.get("/api/getUser",authMiddleware,controller.auth.getUser)
+  router.get("/api/logout",authMiddleware,controller.auth.logout)
 
   // update image
   router.post("/api/upload/image",authMiddleware,controller.tool.updateImage)
+
+
+  // socket.io router
+  io.of("/").route("message",io.controller.home.index)
+  io.of("/").route("login",io.controller.home.login)
+  io.of("/").route("logout",io.controller.home.logout)
 };

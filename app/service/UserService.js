@@ -53,6 +53,21 @@ class UserService extends Service{
     });
     return users.length;
   }
+
+  async saveSocketId(id,socketId){
+    let user = await this.show(id)
+    user.update({
+      socket_id:socketId
+    })
+  }
+
+  async delSocketId(id){
+    let user = await this.show(id)
+    user.update({
+      socket_id:null
+    })
+  }
+
 }
 
 module.exports = UserService;

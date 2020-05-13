@@ -19,7 +19,7 @@ class UserRequests extends Controller{
         let friends = await this.service.userRequestService.show(this.ctx.params.id);
 
         friends = friends.map(v =>{
-            return  v.from_id !== this.ctx.user.id ? v.from_user : v.to_user;
+            return  v.from_id !== this.ctx.session.user.id ? v.from_user : v.to_user;
         })
 
         this.ctx.body = friends

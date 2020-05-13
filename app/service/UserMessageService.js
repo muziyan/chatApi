@@ -23,6 +23,9 @@ class UserMessageService extends Service{
                 from_id:[from_id,to_id],
                 to_id:[to_id,from_id]
             },
+            order:[
+                ['id',"desc"]
+            ],
             include:[
                 {
                     model:this.ctx.model.User,

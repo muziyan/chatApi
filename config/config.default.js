@@ -20,7 +20,8 @@ module.exports = appInfo => {
       database: process.env.DATABASE,
       username:process.env.USERNAME,
       password:process.env.PASSWORD,
-      timezone:"+08:00"
+      timezone:"+08:00",
+      logging:false
     },
     security:{
       csrf:{
@@ -44,6 +45,14 @@ module.exports = appInfo => {
         bucket: process.env.BUCKET,
         endpoint:process.env.REGION,
         timeout: '60s',
+      }
+    },
+    io:{
+      namespace:{
+        "/":{
+          connectionMiddleware: ["authorization"],
+          packetMiddleware: [],
+        }
       }
     }
   };

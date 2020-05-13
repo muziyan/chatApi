@@ -6,7 +6,8 @@ module.exports = options =>{
       const userAgent = ctx.header["user-agent"]
       const token = ctx.header.authorization.split(" ")[1];
       const decoded = jwt.verify(token,userAgent)
-      ctx.user = await ctx.service.userService.show(decoded)
+      ctx.session.userId = decoded;
+      ctx.session.user = await ctx.service.userService.show(decoded);
       await next();
     }else{
       ctx.status = 401;

@@ -19,6 +19,8 @@ class AuthController extends Controller{
         const userAgent = this.ctx.header["user-agent"]
         await service.userService.update(user,{flag:"online"})
         let token = jwt.sign(user.id,userAgent)
+        this.ctx.session.userId = user.id;
+        this.ctx.session.user = user;
         this.ctx.status = 200;
         this.ctx.body = {
           token:`Bearer ${token}`
@@ -32,9 +34,16 @@ class AuthController extends Controller{
     }
   }
 
+  async logout(){
+    let user = await this.service.userService.show(this.ctx.session.user.id);
+    await this.service.userService.update(user,{flag:"offline"})
+    this.ctx.session.user = null
+    this.ctx.status = 204;
+  }
+
   async getUser(){
     const {ctx} = this;
-    ctx.body = ctx.user
+    ctx.body = await this.service.userService.show(ctx.session.userId);
   }
 }
 

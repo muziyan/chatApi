@@ -6,8 +6,7 @@ class UserMessage extends Controller{
 
     async index(){
         const {ctx,service} = this;
-        const messages = await service.userMessageService.index();
-        ctx.body = messages;
+        ctx.body = await service.userMessageService.index();
     }
 
 
