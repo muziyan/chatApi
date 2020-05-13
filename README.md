@@ -1,13 +1,16 @@
 # egg.js + egg-sequelize plugin 开发聊天室api接口
 
-## 下载运行
 
+## 因为这个项目在开始的时候就没有思考好代码命名和一些架构问题，所以只写了登陆注册和用户私聊，好友申请api接口已经写好，在前端页面没有实现[前端代码地址](https://github.com/muziyan/chat-client)。
+
+## 下载运行
+> 以下步骤在`linux`下无问题,关于windo下报错可能是依赖包的问题。  
 >`git clone https://github.com/muziyan/chatApi.git`  
 >`copy`一份`.env.exmple`为`.env`在里面配置数据库帐号密码端口数据库名称和跨域白名单  
 >执行`yarn` or `npm i` 下载依赖包  
 >如果`databse`下面有`config.json`就不需要执行生成`config.json`命令  
 >执行`npx sequelize init:config`生成`database config.json`  
-> `config.json`里面需要迁移的数据库配置，需要修改成你自己的配置
+> `config.json`里面需要迁移的数据库配置，需要修改成你自己的配置,具体操作请看官方文档[egg.js sequelize](https://eggjs.org/zh-cn/tutorials/sequelize.html#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C-migrations)  
 >执行`npx sequelize db:migrate`迁移数据库  
 >`npx sequelize db:migrate:undo:all`回滚数据库初始状态  
 >执行`yarn dev` or `npm run dev`运行程序
@@ -19,6 +22,71 @@
 * [database](###database)
     - [usertable](####userstablescolumn)
 * [api doc](###apiDoc)
+
+
+### 关于egg.js使用的一些笔记
+
+#### `api`跨域问题
+需要安装`egg-cors`在plugin.js中启用代码如下:
+```
+    cors : {
+        enable:true,
+        package:"egg-cors"
+    },
+```
+在`config.default.js`中配置如下:
+```
+    security:{
+      csrf:{
+        enable:false  // 关闭csrf验证 因为我们使用api是无法获取到egg生成的cors
+      },
+      domainWhiteList:[
+        "0.0.0.0/8"  // 跨域白名单 可以设置多个
+      ],
+    },
+    cors:{
+      origin:"*",   // 任何origin地址都允许访问
+      allowMethod:"*"   // 任何请求都允许访问
+    },
+```
+
+#### `ali-oss`上传图片文件
+需要安装`egg-oss`在`plugin.js`中启用代码和启用`egg-cors`一样只需要把`cors`换成`oss`，`oss`就是在`controller`中使用的名字  
+`config.default.js`中配置:
+```
+    multipart:{
+      mode:'file' // egg中内置的文件上传 必须要开启不然无法接收到文件
+    },
+    // 下面的配置是你oss的id之类
+    oss:{
+      client:{
+        accessKeyId: process.env.ACCESS_KEY_ID,
+        accessKeySecret: process.env.ACCESS_KEY_SECRET,
+        bucket: process.env.BUCKET,
+        endpoint:process.env.REGION,
+        timeout: '60s',
+      }
+    },
+```
+
+#### `sequelize`和`database migrate`的使用
+这部分使用在egg.js的文档中都有详细步骤，我就帖个地址[egg.js sequelize](https://eggjs.org/zh-cn/tutorials/sequelize.html#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C-migrations)  
+关于`sequlize`的进阶操作可以看官方文档,文档在上面  
+关于`sequelize`的时区问题我们只需要在`config.default.js`中添加`timezone:'+08:00'`即可  
+控制在终端中输出或不输出`sql`语句在配置中添加`logging:false || true`即可。 
+我的`config.js`配置 
+```
+    sequelize : {
+      dialect: process.env.DEFAUULT_DATABASE,
+      host: process.env.HOST,
+      port: process.env.PORT,
+      database: process.env.DATABASE,
+      username:process.env.USERNAME,
+      password:process.env.PASSWORD,
+      timezone:"+08:00",
+      logging:false
+    },
+```
 
 
 
